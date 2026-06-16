@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QUANT MATRIX CONSOLE V14 - SUPREME INFRASTRUCTURE</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: #0a0e27;
+            color: #00ff66;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* MAIN LAYOUT */
+        .matrix-container {
+            display: grid;
+            grid-template-columns: 200px 1fr 300px;
+            gap: 10px;
+            padding: 10px;
+            height: 100vh;
+            background: linear-gradient(135deg, #0a0e27 0%, #16213e 100%);
+        }
+
+        /* HEADER */
+        .header {
+            grid-column: 1 / -1;
+            background: linear-gradient(90deg, #00ff66 0%, #00cc52 100%);
+            color: #0a0e27;
+            padding: 8px 15px;
+            font-weight: bold;
+            font-size: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 3px;
+            box-shadow: 0 0 15px rgba(0, 255, 102, 0.4);
+        }
+
+        .status-light {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background-color: #00ff66;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* LEFT SIDEBAR - WATCHLIST */
+        .watchlist-sidebar {
+            background: rgba(0, 51, 102, 0.5);
+            border: 1px solid #00ff66;
+            border-radius: 5px;
+            padding: 10px;
+            overflow-y: auto;
+            grid-row: 2;
+        }
+
+        .watchlist-title {
+            color: #00ff66;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #00ff66;
+            padding-bottom: 5px;
+        }
+
+        .symbol-btn {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 5px;
+            background-color: rgba(0, 255, 102, 0.1);
+            border: 1px solid #00ff66;
+            color: #00ff66;
+            cursor: pointer;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+
+        .symbol-btn:hover {
+            background-color: #00ff66;
+            color: #0a0e27;
+            box-shadow: 0 0 10px rgba(0, 255, 102, 0.6);
+        }
+
+        .symbol-btn.active {
+            background-color: #00ff66;
+            color: #0a0e27;
+            font-weight: bold;
+            box-shadow: 0 0 15px rgba(0, 255, 102, 0.8);
+        }
+
+        /* CENTER GRID - PERFORMANCE DECK */
+        .performance-deck {
+            display: grid;
+            grid-template-rows: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            overflow-y: auto;
+            grid-row: 2;
+        }
+
+        .info-box {
+            background: rgba(0, 51, 102, 0.6);
+            border: 2px solid #00ff66;
+            border-radius: 5px;
+            padding: 12px;
+            font-size: 11px;
+            line-height: 1.6;
+            box-shadow: 0 0 10px rgba(0, 255, 102, 0.2);
+            transition: all 0.3s;
+        }
+
+        .info-box:hover {
+            box-shadow: 0 0 20px rgba(0, 255, 102, 0.5);
+            background: rgba(0, 51, 102, 0.8);
+        }
+
+        .info-box-title {
+            color: #00ff99;
+            font-weight: bold;
+            font-size: 12px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #00ff66;
+            padding-bottom: 4px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+
+        .info-label {
+            color: #00cc66;
+            font-size: 10px;
+        }
+
+        .info-value {
+            color: #00ff66;
+            font-weight: bold;
+            font-size: 10px;
+        }
+
+        .signal-buy {
+            color: #00ff00;
+            font-weight: bold;
+        }
+
+        .signal-sell {
+            color: #ff0000;
+            font-weight: bold;
+        }
+
+        .signal-neutral {
+            color: #ffff00;
+            font-weight: bold;
+        }
+
+        /* RIGHT SIDEBAR - CONFLUENCE BOARD */
+        .confluence-board {
+            background: rgba(0, 51, 102, 0.5);
+            border: 1px solid #00ff66;
+            border-radius: 5px;
+            padding: 10px;
+            overflow-y: auto;
+            grid-row: 2;
+        }
+
+        .confluence-title {
+            color: #00ff66;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            border-bottom: 2px solid #00ff66;
+            padding-bottom: 5px;
+        }
+
+        .indicator-row {
+            background: rgba(0, 102, 204, 0.3);
+            border-left: 3px solid #00ff66;
+            padding: 6px 8px;
+            margin-bottom: 6px;
+            border-radius: 2px;
+            font-size: 10px;
+        }
+
+        .indicator-name {
+            color: #00ff99;
+            font-weight: bold;
+        }
+
+        .indicator-signal {
+            float: right;
+            font-weight: bold;
+        }
+
+        .news-log {
+            background: rgba(51, 51, 102, 0.5);
+            border: 1px solid #00cc66;
+            border-radius: 3px;
+            padding: 6px;
+            margin-top: 8px;
+            font-size: 9px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .news-item {
+            margin-bottom: 4px;
+            color: #00ff66;
+            padding: 3px;
+            border-bottom: 1px dotted #00ff66;
+        }
+
+        /* SCROLLBARS */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 51, 102, 0.3);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #00ff66;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00ff99;
+        }
+
+        /* LOADING */
+        .loading {
+            display: inline-block;
+            color: #00ff66;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 49%, 100% { opacity: 1; }
+            50%, 99% { opacity: 0.3; }
+        }
+
+        /* GRID EXPANSION SLOTS */
+        .expansion-slot {
+            background: rgba(0, 51, 102, 0.3);
+            border: 2px dashed #00ff66;
+            border-radius: 5px;
+            padding: 12px;
+            font-size: 11px;
+            color: #00cc66;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-style: italic;
+        }
+
+        /* ACCOUNT INFO BOX */
+        .account-box {
+            background: rgba(0, 102, 0, 0.3);
+            border: 2px solid #00ff00;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .account-box-title {
+            color: #00ff00;
+            font-weight: bold;
+            margin-bottom: 6px;
+            font-size: 11px;
+        }
+
+        /* TRADING SIGNALS BOX */
+        .trading-signals-box {
+            background: rgba(102, 0, 51, 0.3);
+            border: 2px solid #ff3366;
+            border-radius: 5px;
+            padding: 10px;
+        }
+
+        .signal-timeframe {
+            background: rgba(0, 0, 0, 0.3);
+            border-left: 3px solid #ff3366;
+            padding: 8px;
+            margin-bottom: 8px;
+            border-radius: 2px;
+        }
+
+        .signal-timeframe-title {
+            color: #ff6699;
+            font-weight: bold;
+            font-size: 10px;
+            margin-bottom: 4px;
+        }
+
+        .signal-detail {
+            display: flex;
+            justify-content: space-between;
+            font-size: 9px;
+            color: #00ff66;
+            margin-bottom: 2px;
+        }
+
+        .signal-label {
+            color: #00cc66;
+        }
+    </style>
+</head>
+<body>
+    <div class="matrix-container">
+        <!-- HEADER -->
+        <div class="header">
+            <div>
+                <span class="status-light"></span>QUANT MATRIX CONSOLE V14 - SUPREME INFRASTRUCTURE
+            </div>
+            <div id="timestamp">Loading...</div>
+        </div>
+
+        <!-- LEFT SIDEBAR: WATCHLIST -->
+        <div class="watchlist-sidebar">
+            <div class="watchlist-title">📊 WATCHLIST</div>
+            <button class="symbol-btn active" data-symbol="XAUUSD">XAUUSD (Gold)</button>
+            <button class="symbol-btn" data-symbol="EURUSD">EURUSD (EUR/USD)</button>
+            <button class="symbol-btn" data-symbol="GBPUSD">GBPUSD (GBP/USD)</button>
+            <button class="symbol-btn" data-symbol="BTCUSD">BTCUSD (Bitcoin)</button>
+            <div style="margin-top: 20px; color: #00cc66; font-size: 9px; border-top: 1px solid #00ff66; padding-top: 10px;">
+                <strong>LIVE ACCOUNT</strong><br>
+                Status: <span id="account-status">Connecting...</span>
+            </div>
+        </div>
+
+        <!-- CENTER: PERFORMANCE DECK -->
+        <div class="performance-deck" id="performance-deck">
+            <!-- CURRENT PRICE BOX -->
+            <div class="info-box">
+                <div class="info-box-title">💰 CURRENT MARKET PRICE</div>
+                <div class="info-row">
+                    <span class="info-label">Symbol:</span>
+                    <span class="info-value" id="symbol-display">XAUUSD</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Price:</span>
+                    <span class="info-value" id="current-price">N/A</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Time:</span>
+                    <span class="info-value" id="price-time">N/A</span>
+                </div>
+            </div>
+
+            <!-- ACCOUNT INFO BOX -->
+            <div class="account-box">
+                <div class="account-box-title">💳 ACCOUNT METRICS</div>
+                <div class="info-row">
+                    <span class="info-label">Equity:</span>
+                    <span class="info-value" id="equity">N/A</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Balance:</span>
+                    <span class="info-value" id="balance">N/A</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Spread:</span>
+                    <span class="info-value" id="spread">N/A</span>
+                </div>
+            </div>
+
+            <!-- SYSTEM CONFIDENCE BOX -->
+            <div class="info-box">
+                <div class="info-box-title">🎯 SYSTEM CONFIDENCE</div>
+                <div class="info-row">
+                    <span class="info-label">Consensus Score:</span>
+                    <span class="info-value" id="confidence-score">N/A</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Market Bias:</span>
+                    <span class="info-value" id="market-bias">N/A</span>
+                </div>
+            </div>
+
+            <!-- SMART MONEY CONCEPTS BOX -->
+            <div class="info-box">
+                <div class="info-box-title">🧠 SMART MONEY CONCEPTS</div>
+                <div class="info-row">
+                    <span class="info-label">Structure:</span>
+                    <span class="info-value" id="smc-structure">N/A</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Signal:</span>
+                    <span class="info-value" id="smc-signal">N/A</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Level:</span>
+                    <span class="info-value" id="smc-level">N/A</span>
+                </div>
+            </div>
+
+            <!-- VOLUME ANALYSIS BOX -->
+            <div class="info-box">
+                <div class="info-box-title">📈 VOLUME ANALYSIS</div>
+                <div class="info-row">
+                    <span class="info-label">VWAP:</span>
+                    <span class="info-value" id="vwap">N/A</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">OBV:</span>
+                    <span class="info-value" id="obv">N/A</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">MFI:</span>
+                    <span class="info-value" id="mfi">N/A</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Vol POC:</span>
+                    <span class="info-value" id="vol-poc">N/A</span>
+                </div>
+            </div>
+
+            <!-- TREND INDICATORS BOX -->
+            <div class="info-box">
+                <div class="info-box-title">📊 TREND INDICATORS</div>
+                <div class="info-row">
+                    <span class="info-label">SMA20/50:</span>
+                    <span class="info-value" id="sma-values">N/A</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">EMA12/26:</span>
+                    <span class="info-value" id="ema-values">N/A</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Supertrend:</span>
+                    <span class="info-value" id="supertrend">N/A</span>
+                </div>
+            </div>
+
+            <!-- BOLLINGER BANDS BOX -->
+            <div class="info-box">
+                <div class="info-box-title">📏 BOLLINGER BANDS</div>
+                <div class="info-row">
+                    <span class="info-label">Upper:</span>
+                    <span class="info-value" id="bb-upper">N/A</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Middle:</span>
+                    <span class="info-value" id="bb-middle">N/A</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Lower:</span>
+                    <span class="info-value" id="bb-lower">N/A</span>
+                </div>
+            </div>
+
+            <!-- FIBONACCI LEVELS BOX -->
+            <div class="info-box">
+                <div class="info-box-title">🔢 FIBONACCI RETRACEMENT</div>
+                <div class="info-row">
+                    <span class="info-label">0.0% (High):</span>
+                    <span class="info-value" id="fib-0">N/A</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">23.6%:</span>
+                    <span class="info-value" id="fib-236">N/A</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">38.2%:</span>
+                    <span class="info-value" id="fib-382">N/A</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">50.0%:</span>
+                    <span class="info-value" id="fib-50">N/A</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">61.8%:</span>
+                    <span class="info-value" id="fib-618">N/A</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">100% (Low):</span>
+                    <span class="info-value" id="fib-100">N/A</span>
+                </div>
+            </div>
+
+            <!-- MOMENTUM INDICATORS BOX -->
+            <div class="info-box">
+                <div class="info-box-title">⚡ MOMENTUM INDICATORS</div>
+                <div class="info-row">
+                    <span class="info-label">RSI(14):</span>
+                    <span class="info-value" id="rsi">N/A</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Stochastic K/D:</span>
+                    <span class="info-value" id="stochastic">N/A</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">CCI(20):</span>
+                    <span class="info-value" id="cci">N/A</span>
+                </div>
+            </div>
+
+            <!-- MACD BOX -->
+            <div class="info-box">
+                <div class="info-box-title">🎚️ MACD</div>
+                <div class="info-row">
+                    <span class="info-label">MACD:</span>
+                    <span class="info-value" id="macd">N/A</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Signal:</span>
+                    <span class="info-value" id="macd-signal">N/A</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Histogram:</span>
+                    <span class="info-value" id="macd-histogram">N/A</span>
+                </div>
+            </div>
+
+            <!-- ADX & ATR BOX -->
+            <div class="info-box">
+                <div class="info-box-title">📐 VOLATILITY & DIRECTION</div>
+                <div class="info-row">
+                    <span class="info-label">ATR(14):</span>
+                    <span class="info-value" id="atr">N/A</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">ADX(14):</span>
+                    <span class="info-value" id="adx">N/A</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Chaikin MF:</span>
+                    <span class="info-value" id="chaikin">N/A</span>
+                </div>
+            </div>
+
+            <!-- PIVOT POINTS BOX -->
+            <div class="info-box">
+                <div class="info-box-title">🎪 PIVOT POINTS</div>
+                <div class="info-row">
+                    <span class="info-label">R2:</span>
+                    <span class="info-value" id="pivot-r2">N/A</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">R1:</span>
+                    <span class="info-value" id="pivot-r1">N/A</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Pivot:</span>
+                    <span class="info-value" id="pivot-p">N/A</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">S1:</span>
+                    <span class="info-value" id="pivot-s1">N/A</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">S2:</span>
+                    <span class="info-value" id="pivot-s2">N/A</span>
+                </div>
+            </div>
+
+            <!-- TRADING SIGNALS - MULTI TIMEFRAME -->
+            <div class="trading-signals-box">
+                <div class="info-box-title">🚀 TRADING SIGNALS - MULTI-TIMEFRAME</div>
+
+                <!-- SCALPING SIGNAL -->
+                <div class="signal-timeframe">
+                    <div class="signal-timeframe-title">⚡ SCALPING (M5)</div>
+                    <div class="signal-detail">
+                        <span class="signal-label">Entry:</span>
+                        <span id="scalp-entry">N/A</span>
+                    </div>
+                    <div class="signal-detail">
+                        <span class="signal-label">SL:</span>
+                        <span id="scalp-sl">N/A</span>
+                    </div>
+                    <div class="signal-detail">
+                        <span class="signal-label">TP1:</span>
+                        <span id="scalp-tp1">N/A</span>
+                    </div>
+                    <div class="signal-detail">
+                        <span class="signal-label">TP2:</span>
+                        <span id="scalp-tp2">N/A</span>
+                    </div>
+                    <div class="signal-detail">
+                        <span class="signal-label">TP3:</span>
+                        <span id="scalp-tp3">N/A</span>
+                    </div>
+                    <div class="signal-detail">
+                        <span class="signal-label">R/R:</span>
+                        <span id="scalp-rr">N/A</span>
+                    </div>
+                    <div class="signal-detail">
+                        <span class="signal-label">Signal:</span>
+                        <span class="info-value" id="scalp-signal">N/A</span>
+                    </div>
+                </div>
+
+                <!-- SWING SIGNAL -->
+                <div class="signal-timeframe">
+                    <div class="signal-timeframe-title">📈 SWING (H4)</div>
+                    <div class="signal-detail">
+                        <span class="signal-label">Entry:</span>
+                        <span id="swing-entry">N/A</span>
+                    </div>
+                    <div class="signal-detail">
+                        <span class="signal-label">SL:</span>
+                        <span id="swing-sl">N/A</span>
+                    </div>
+                    <div class="signal-detail">
+                        <span class="signal-label">TP1:</span>
+                        <span id="swing-tp1">N/A</span>
+                    </div>
+                    <div class="signal-detail">
+                        <span class="signal-label">TP2:</span>
+                        <span id="swing-tp2">N/A</span>
+                    </div>
+                    <div class="signal-detail">
+                        <span class="signal-label">TP3:</span>
+                        <span id="swing-tp3">N/A</span>
+                    </div>
+                    <div class="signal-detail">
+                        <span class="signal-label">R/R:</span>
+                        <span id="swing-rr">N/A</span>
+                    </div>
+                    <div class="signal-detail">
+                        <span class="signal-label">Signal:</span>
+                        <span class="info-value" id="swing-signal">N/A</span>
+                    </div>
+                </div>
+
+                <!-- LONG-TERM SIGNAL -->
+                <div class="signal-timeframe">
+                    <div class="signal-timeframe-title">📊 LONG-TERM (D1)</div>
+                    <div class="signal-detail">
+                        <span class="signal-label">Entry:</span>
+                        <span id="lt-entry">N/A</span>
+                    </div>
+                    <div class="signal-detail">
+                        <span class="signal-label">SL:</span>
+                        <span id="lt-sl">N/A</span>
+                    </div>
+                    <div class="signal-detail">
+                        <span class="signal-label">TP1:</span>
+                        <span id="lt-tp1">N/A</span>
+                    </div>
+                    <div class="signal-detail">
+                        <span class="signal-label">TP2:</span>
+                        <span id="lt-tp2">N/A</span>
+                    </div>
+                    <div class="signal-detail">
+                        <span class="signal-label">TP3:</span>
+                        <span id="lt-tp3">N/A</span>
+                    </div>
+                    <div class="signal-detail">
+                        <span class="signal-label">R/R:</span>
+                        <span id="lt-rr">N/A</span>
+                    </div>
+                    <div class="signal-detail">
+                        <span class="signal-label">Signal:</span>
+                        <span class="info-value" id="lt-signal">N/A</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EXPANSION SLOTS -->
+            <div class="expansion-slot">
+                📌 Advanced Charting Module<br>(Reserved for Future)
+            </div>
+            <div class="expansion-slot">
+                📌 Historical Performance Tracker<br>(Reserved for Future)
+            </div>
+        </div>
+
+        <!-- RIGHT SIDEBAR: CONFLUENCE VOTING BOARD -->
+        <div class="confluence-board">
+            <div class="confluence-title">🎯 INDICATOR CONSENSUS</div>
+
+            <div class="indicator-row">
+                <div class="indicator-name">SMC</div>
+                <div class="indicator-signal" id="conf-smc">N/A</div>
+            </div>
+
+            <div class="indicator-row">
+                <div class="indicator-name">VWAP</div>
+                <div class="indicator-signal" id="conf-vwap">N/A</div>
+            </div>
+
+            <div class="indicator-row">
+                <div class="indicator-name">BOLLINGER</div>
+                <div class="indicator-signal" id="conf-bollinger">N/A</div>
+            </div>
+
+            <div class="indicator-row">
+                <div class="indicator-name">MACD</div>
+                <div class="indicator-signal" id="conf-macd">N/A</div>
+            </div>
+
+            <div class="indicator-row">
+                <div class="indicator-name">RSI</div>
+                <div class="indicator-signal" id="conf-rsi">N/A</div>
+            </div>
+
+            <div class="indicator-row">
+                <div class="indicator-name">SUPERTREND</div>
+                <div class="indicator-signal" id="conf-supertrend">N/A</div>
+            </div>
+
+            <div class="indicator-row">
+                <div class="indicator-name">STOCHASTIC</div>
+                <div class="indicator-signal" id="conf-stochastic">N/A</div>
+            </div>
+
+            <div class="indicator-row">
+                <div class="indicator-name">ADX</div>
+                <div class="indicator-signal" id="conf-adx">N/A</div>
+            </div>
+
+            <div class="indicator-row">
+                <div class="indicator-name">ICHIMOKU</div>
+                <div class="indicator-signal" id="conf-ichimoku">N/A</div>
+            </div>
+
+            <div class="indicator-row">
+                <div class="indicator-name">CCI</div>
+                <div class="indicator-signal" id="conf-cci">N/A</div>
+            </div>
+
+            <!-- LIVE NEWS FEED -->
+            <div class="news-log">
+                <div style="color: #00ff99; font-weight: bold; margin-bottom: 6px; font-size: 10px;">📰 LIVE MARKET NEWS</div>
+                <div class="news-item">▶ System initialized and monitoring markets...</div>
+                <div class="news-item">▶ Connecting to real-time data stream...</div>
+                <div class="news-item">▶ Loading indicator calculations...</div>
+                <div id="news-feed"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== GLOBAL VARIABLES ====================
+        let currentSymbol = "XAUUSD";
+        let refreshInterval = 2000; // 2 seconds
+
+        // ==================== DOM ELEMENTS ====================
+        const elements = {
+            // Watchlist buttons
+            symbolBtns: document.querySelectorAll('.symbol-btn'),
+            
+            // Price display
+            symbolDisplay: document.getElementById('symbol-display'),
+            currentPrice: document.getElementById('current-price'),
+            priceTime: document.getElementById('price-time'),
+            
+            // Account
+            equity: document.getElementById('equity'),
+            balance: document.getElementById('balance'),
+            spread: document.getElementById('spread'),
+            accountStatus: document.getElementById('account-status'),
+            
+            // System Confidence
+            confidenceScore: document.getElementById('confidence-score'),
+            marketBias: document.getElementById('market-bias'),
+            
+            // SMC
+            smcStructure: document.getElementById('smc-structure'),
+            smcSignal: document.getElementById('smc-signal'),
+            smcLevel: document.getElementById('smc-level'),
+            
+            // Volume
+            vwap: document.getElementById('vwap'),
+            obv: document.getElementById('obv'),
+            mfi: document.getElementById('mfi'),
+            volPoc: document.getElementById('vol-poc'),
+            
+            // Trend
+            smaValues: document.getElementById('sma-values'),
+            emaValues: document.getElementById('ema-values'),
+            supertrend: document.getElementById('supertrend'),
+            
+            // Bollinger
+            bbUpper: document.getElementById('bb-upper'),
+            bbMiddle: document.getElementById('bb-middle'),
+            bbLower: document.getElementById('bb-lower'),
+            
+            // Fibonacci
+            fib0: document.getElementById('fib-0'),
+            fib236: document.getElementById('fib-236'),
+            fib382: document.getElementById('fib-382'),
+            fib50: document.getElementById('fib-50'),
+            fib618: document.getElementById('fib-618'),
+            fib100: document.getElementById('fib-100'),
+            
+            // Momentum
+            rsi: document.getElementById('rsi'),
+            stochastic: document.getElementById('stochastic'),
+            cci: document.getElementById('cci'),
+            
+            // MACD
+            macd: document.getElementById('macd'),
+            macdSignal: document.getElementById('macd-signal'),
+            macdHistogram: document.getElementById('macd-histogram'),
+            
+            // ATR & ADX
+            atr: document.getElementById('atr'),
+            adx: document.getElementById('adx'),
+            chaikin: document.getElementById('chaikin'),
+            
+            // Pivot Points
+            pivotR2: document.getElementById('pivot-r2'),
+            pivotR1: document.getElementById('pivot-r1'),
+            pivotP: document.getElementById('pivot-p'),
+            pivotS1: document.getElementById('pivot-s1'),
+            pivotS2: document.getElementById('pivot-s2'),
+            
+            // Trading Signals - Scalping
+            scalpEntry: document.getElementById('scalp-entry'),
+            scalpSL: document.getElementById('scalp-sl'),
+            scalpTP1: document.getElementById('scalp-tp1'),
+            scalpTP2: document.getElementById('scalp-tp2'),
+            scalpTP3: document.getElementById('scalp-tp3'),
+            scalpRR: document.getElementById('scalp-rr'),
+            scalpSignal: document.getElementById('scalp-signal'),
+            
+            // Trading Signals - Swing
+            swingEntry: document.getElementById('swing-entry'),
+            swingSL: document.getElementById('swing-sl'),
+            swingTP1: document.getElementById('swing-tp1'),
+            swingTP2: document.getElementById('swing-tp2'),
+            swingTP3: document.getElementById('swing-tp3'),
+            swingRR: document.getElementById('swing-rr'),
+            swingSignal: document.getElementById('swing-signal'),
+            
+            // Trading Signals - Long-term
+            ltEntry: document.getElementById('lt-entry'),
+            ltSL: document.getElementById('lt-sl'),
+            ltTP1: document.getElementById('lt-tp1'),
+            ltTP2: document.getElementById('lt-tp2'),
+            ltTP3: document.getElementById('lt-tp3'),
+            ltRR: document.getElementById('lt-rr'),
+            ltSignal: document.getElementById('lt-signal'),
+            
+            // Confluence
+            confSMC: document.getElementById('conf-smc'),
+            confVWAP: document.getElementById('conf-vwap'),
+            confBollinger: document.getElementById('conf-bollinger'),
+            confMACD: document.getElementById('conf-macd'),
+            confRSI: document.getElementById('conf-rsi'),
+            confSupertrend: document.getElementById('conf-supertrend'),
+            confStochastic: document.getElementById('conf-stochastic'),
+            confADX: document.getElementById('conf-adx'),
+            confIchimoku: document.getElementById('conf-ichimoku'),
+            confCCI: document.getElementById('conf-cci'),
+            
+            // News
+            newsFeed: document.getElementById('news-feed'),
+            timestamp: document.getElementById('timestamp')
+        };
+
+        // ==================== EVENT LISTENERS ====================
+        elements.symbolBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                // Remove active class from all buttons
+                elements.symbolBtns.forEach(b => b.classList.remove('active'));
+                // Add active class to clicked button
+                e.target.classList.add('active');
+                // Update current symbol
+                currentSymbol = e.target.dataset.symbol;
+                // Fetch new data
+                updateDashboard();
+            });
+        });
+
+        // ==================== DATA FETCHING & DISPLAY ====================
+        async function updateDashboard() {
+            try {
+                // Update timestamp
+                const now = new Date();
+                elements.timestamp.textContent = now.toLocaleTimeString();
+                
+                // Fetch analysis data
+                const response = await fetch(`/api/analyze/${currentSymbol}`);
+                const data = await response.json();
+
+                if (data.error) {
+                    console.error('Error fetching data:', data.error);
+                    addNewsItem(`❌ Data error: ${data.error}`);
+                    return;
+                }
+
+                // ========== UPDATE ALL DISPLAY ELEMENTS ==========
+                
+                // Symbol & Price
+                elements.symbolDisplay.innerText = data.symbol || "N/A";
+                elements.currentPrice.innerText = data.current_price || "N/A";
+                elements.priceTime.innerText = new Date(data.timestamp).toLocaleTimeString();
+
+                // Account Info
+                elements.equity.innerText = data.account?.equity || "N/A";
+                elements.balance.innerText = data.account?.balance || "N/A";
+                elements.spread.innerText = data.account?.spread || "N/A";
+                elements.accountStatus.innerText = "🟢 LIVE";
+
+                // System Confidence
+                elements.confidenceScore.innerText = data.system_confidence || "N/A";
+                const confidenceClass = getSignalClass(data.system_confidence);
+                elements.marketBias.className = `info-value ${confidenceClass}`;
+                elements.marketBias.innerText = data.system_confidence || "N/A";
+
+                // SMC
+                elements.smcStructure.innerText = data.smart_money?.structure || "N/A";
+                elements.smcSignal.className = `info-value ${getSignalClass(data.smart_money?.signal)}`;
+                elements.smcSignal.innerText = data.smart_money?.signal || "N/A";
+                elements.smcLevel.innerText = data.smart_money?.level || "N/A";
+
+                // Volume
+                elements.vwap.innerText = data.volume?.vwap || "N/A";
+                elements.obv.innerText = data.volume?.obv || "N/A";
+                elements.mfi.innerText = data.volume?.mfi || "N/A";
+                elements.volPoc.innerText = data.volume?.volume_profile_poc || "N/A";
+
+                // Trend
+                elements.smaValues.innerText = `${data.trend?.sma_20 || "N/A"} / ${data.trend?.sma_50 || "N/A"}`;
+                elements.emaValues.innerText = `${data.trend?.ema_12 || "N/A"} / ${data.trend?.ema_26 || "N/A"}`;
+                elements.supertrend.innerText = data.trend?.supertrend?.signal || "N/A";
+
+                // Bollinger Bands
+                elements.bbUpper.innerText = data.volatility?.bollinger_bands?.upper || "N/A";
+                elements.bbMiddle.innerText = data.volatility?.bollinger_bands?.middle || "N/A";
+                elements.bbLower.innerText = data.volatility?.bollinger_bands?.lower || "N/A";
+
+                // Fibonacci
+                elements.fib0.innerText = data.volatility?.fibonacci_levels?.["0.0"] || "N/A";
+                elements.fib236.innerText = data.volatility?.fibonacci_levels?.["23.6"] || "N/A";
+                elements.fib382.innerText = data.volatility?.fibonacci_levels?.["38.2"] || "N/A";
+                elements.fib50.innerText = data.volatility?.fibonacci_levels?.["50.0"] || "N/A";
+                elements.fib618.innerText = data.volatility?.fibonacci_levels?.["61.8"] || "N/A";
+                elements.fib100.innerText = data.volatility?.fibonacci_levels?.["100.0"] || "N/A";
+
+                // Momentum
+                elements.rsi.innerText = data.momentum?.rsi_14 || "N/A";
+                elements.stochastic.innerText = `${data.momentum?.stochastic?.k || "N/A"} / ${data.momentum?.stochastic?.d || "N/A"}`;
+                elements.cci.innerText = data.momentum?.cci_20 || "N/A";
+
+                // MACD
+                elements.macd.innerText = data.momentum?.macd?.macd || "N/A";
+                elements.macdSignal.innerText = data.momentum?.macd?.signal || "N/A";
+                elements.macdHistogram.innerText = data.momentum?.macd?.histogram || "N/A";
+
+                // ATR & ADX
+                elements.atr.innerText = data.volatility?.atr_14 || "N/A";
+                elements.adx.innerText = data.momentum?.adx_14 || "N/A";
+                elements.chaikin.innerText = data.volume?.chaikin_mf || "N/A";
+
+                // Pivot Points
+                elements.pivotR2.innerText = data.pivot_points?.r2 || "N/A";
+                elements.pivotR1.innerText = data.pivot_points?.r1 || "N/A";
+                elements.pivotP.innerText = data.pivot_points?.pivot || "N/A";
+                elements.pivotS1.innerText = data.pivot_points?.s1 || "N/A";
+                elements.pivotS2.innerText = data.pivot_points?.s2 || "N/A";
+
+                // Trading Signals - Scalping
+                const scalping = data.trading_signals?.scalping || {};
+                elements.scalpEntry.innerText = scalping.entry || "N/A";
+                elements.scalpSL.innerText = scalping.sl || "N/A";
+                elements.scalpTP1.innerText = scalping.tp1 || "N/A";
+                elements.scalpTP2.innerText = scalping.tp2 || "N/A";
+                elements.scalpTP3.innerText = scalping.tp3 || "N/A";
+                elements.scalpRR.innerText = scalping.risk_reward || "N/A";
+                elements.scalpSignal.className = `info-value ${getSignalClass(scalping.signal)}`;
+                elements.scalpSignal.innerText = scalping.signal || "N/A";
+
+                // Trading Signals - Swing
+                const swing = data.trading_signals?.swing || {};
+                elements.swingEntry.innerText = swing.entry || "N/A";
+                elements.swingSL.innerText = swing.sl || "N/A";
+                elements.swingTP1.innerText = swing.tp1 || "N/A";
+                elements.swingTP2.innerText = swing.tp2 || "N/A";
+                elements.swingTP3.innerText = swing.tp3 || "N/A";
+                elements.swingRR.innerText = swing.risk_reward || "N/A";
+                elements.swingSignal.className = `info-value ${getSignalClass(swing.signal)}`;
+                elements.swingSignal.innerText = swing.signal || "N/A";
+
+                // Trading Signals - Long-term
+                const longterm = data.trading_signals?.long_term || {};
+                elements.ltEntry.innerText = longterm.entry || "N/A";
+                elements.ltSL.innerText = longterm.sl || "N/A";
+                elements.ltTP1.innerText = longterm.tp1 || "N/A";
+                elements.ltTP2.innerText = longterm.tp2 || "N/A";
+                elements.ltTP3.innerText = longterm.tp3 || "N/A";
+                elements.ltRR.innerText = longterm.risk_reward || "N/A";
+                elements.ltSignal.className = `info-value ${getSignalClass(longterm.signal)}`;
+                elements.ltSignal.innerText = longterm.signal || "N/A";
+
+                // Update Confluence Board
+                updateConfluenceBoard(data);
+
+                // Add success message to news
+                addNewsItem(`✅ ${currentSymbol} updated successfully`);
+
+            } catch (error) {
+                console.error('Dashboard update error:', error);
+                addNewsItem(`⚠️ Connection error: ${error.message}`);
+            }
+        }
+
+        function updateConfluenceBoard(data) {
+            // SMC
+            const smcSignal = data.smart_money?.signal || "N/A";
+            elements.confSMC.innerText = smcSignal;
+            elements.confSMC.className = `indicator-signal ${getSignalClass(smcSignal)}`;
+
+            // VWAP - compare with price
+            const vwap = parseFloat(data.volume?.vwap) || 0;
+            const price = parseFloat(data.current_price) || 0;
+            const vwapSignal = vwap > price ? "BUY" : vwap < price ? "SELL" : "N/A";
+            elements.confVWAP.innerText = vwapSignal;
+            elements.confVWAP.className = `indicator-signal ${getSignalClass(vwapSignal)}`;
+
+            // Bollinger - compare with bands
+            const bbUpper = parseFloat(data.volatility?.bollinger_bands?.upper) || 0;
+            const bbLower = parseFloat(data.volatility?.bollinger_bands?.lower) || 0;
+            const bbSignal = price > bbUpper ? "SELL" : price < bbLower ? "BUY" : "N/A";
+            elements.confBollinger.innerText = bbSignal;
+            elements.confBollinger.className = `indicator-signal ${getSignalClass(bbSignal)}`;
+
+            // MACD
+            const macd = parseFloat(data.momentum?.macd?.macd) || 0;
+            const macdSig = parseFloat(data.momentum?.macd?.signal) || 0;
+            const macdSignal = macd > macdSig ? "BUY" : macd < macdSig ? "SELL" : "N/A";
+            elements.confMACD.innerText = macdSignal;
+            elements.confMACD.className = `indicator-signal ${getSignalClass(macdSignal)}`;
+
+            // RSI
+            const rsi = parseFloat(data.momentum?.rsi_14) || 0;
+            const rsiSignal = rsi > 70 ? "SELL" : rsi < 30 ? "BUY" : "NEUTRAL";
+            elements.confRSI.innerText = rsiSignal;
+            elements.confRSI.className = `indicator-signal ${getSignalClass(rsiSignal)}`;
+
+            // Supertrend
+            const stSignal = data.trend?.supertrend?.signal || "N/A";
+            elements.confSupertrend.innerText = stSignal;
+            elements.confSupertrend.className = `indicator-signal ${getSignalClass(stSignal)}`;
+
+            // Stochastic
+            const stochK = parseFloat(data.momentum?.stochastic?.k) || 0;
+            const stochSignal = stochK > 80 ? "SELL" : stochK < 20 ? "BUY" : "NEUTRAL";
+            elements.confStochastic.innerText = stochSignal;
+            elements.confStochastic.className = `indicator-signal ${getSignalClass(stochSignal)}`;
+
+            // ADX
+            const adx = parseFloat(data.momentum?.adx_14) || 0;
+            const adxSignal = adx > 25 ? "TREND" : "RANGING";
+            elements.confADX.innerText = adxSignal;
+            elements.confADX.className = `indicator-signal ${getSignalClass(adxSignal)}`;
+
+            // Ichimoku - using Kijun signal from earlier
+            elements.confIchimoku.innerText = "MONITORING";
+            elements.confIchimoku.className = "indicator-signal signal-neutral";
+
+            // CCI
+            const cci = parseFloat(data.momentum?.cci_20) || 0;
+            const cciSignal = cci > 100 ? "SELL" : cci < -100 ? "BUY" : "NEUTRAL";
+            elements.confCCI.innerText = cciSignal;
+            elements.confCCI.className = `indicator-signal ${getSignalClass(cciSignal)}`;
+        }
+
+        function getSignalClass(signal) {
+            if (!signal) return "signal-neutral";
+            const sig = String(signal).toUpperCase();
+            if (sig.includes("BUY") || sig.includes("STRONG BUY")) return "signal-buy";
+            if (sig.includes("SELL") || sig.includes("STRONG SELL")) return "signal-sell";
+            return "signal-neutral";
+        }
+
+        function addNewsItem(message) {
+            const newsItem = document.createElement('div');
+            newsItem.className = 'news-item';
+            newsItem.innerText = message;
+            elements.newsFeed.insertBefore(newsItem, elements.newsFeed.firstChild);
+            
+            // Keep only last 10 news items
+            while (elements.newsFeed.children.length > 10) {
+                elements.newsFeed.removeChild(elements.newsFeed.lastChild);
+            }
+        }
+
+        // ==================== AUTO-REFRESH ====================
+        setInterval(updateDashboard, refreshInterval);
+
+        // Initial load
+        window.addEventListener('load', () => {
+            addNewsItem("🚀 QUANT MATRIX CONSOLE initialized");
+            updateDashboard();
+        });
+    </script>
+</body>
+</html>
